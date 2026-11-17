@@ -77,4 +77,48 @@ class Requisition:
                 self.status = "Not approved"
         return self.status
 
-    
+    def display_requisition(self):
+        """Print the information of this requisition."""
+        print("Date:", self.date)
+        print("Requisition ID:", self.requisition_id)
+        print("Staff ID:", self.staff_id)
+        print("Staff Name:", self.staff_name)
+        print("Total: $" + str(self.total))
+        print("Status:", self.status)
+        print("Approval Reference Number:", self.approval_reference)
+        print()
+
+    @classmethod
+    def display_all_requisitions(cls):
+        """Print the information of all the requisition objects."""
+        for req in cls.all_requisitions:
+            req.display_requisition()
+
+    @classmethod
+    def requisition_statistics(cls):
+        """Print the requisition statistics.
+
+        Counts how many requisitions have been submitted in total and how
+        many are approved, pending and not approved.
+        """
+        submitted = len(cls.all_requisitions)
+        approved = 0
+        pending = 0
+        not_approved = 0
+        for req in cls.all_requisitions:
+            if req.status == "Approved":
+                approved += 1
+            elif req.status == "Pending":
+                pending += 1
+            elif req.status == "Not approved":
+                not_approved += 1
+        print("Displaying the Requisition Statistics")
+        print()
+        print("The total number of requisitions submitted:", submitted)
+        print()
+        print("The total number of approved requisitions:", approved)
+        print()
+        print("The total number of pending requisitions:", pending)
+        print()
+        print("The total number of not approved requisitions:", not_approved)
+        print()
