@@ -1,0 +1,99 @@
+# Staff Requisition System
+
+A Python prototype of a staff requisition system, built as part of BACT7501 Assessment 2 (Software Development Project). Staff submit requisitions with itemised costs. Requisitions under $500 are approved automatically, and those of $500 or more wait for a manager's response.
+
+
+
+## Requirements
+
+- Python 3.8 or later
+- No third-party packages; only the standard library is used
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `requisition.py` | Defines the `Requisition` class, which holds the data and methods for each requisition |
+| `main.py` | Test program that submits six requisitions, shows the statistics, records manager responses, and displays everything again |
+
+## How to run
+
+```bash
+python3 main.py
+```
+
+The program prints all requisitions and the statistics twice: once after submission, and once after the manager responds.
+
+## How it works
+
+### Approval rules
+
+| Requisition total | Result on submission | Approval reference |
+|-------------------|----------------------|--------------------|
+| Less than $500 | Approved automatically | Staff ID + last 3 digits of requisition ID (e.g. `FN19001`) |
+| $500 or more | Pending | Not available until a manager approves |
+
+A manager can then mark a pending requisition as `Approved` or `Not approved`. Requisitions that are not pending are not changed by a manager response.
+
+### The `Requisition` class
+
+Each object represents one requisition.
+
+- **Shared data** (set in `__init__`): date, staff ID, staff name, requisition ID, items, total, status and approval reference.
+- **Class-level data**: `next_requisition_id` (starts at 10001 and increases by one for each requisition) and `all_requisitions` (a list of every requisition created).
+
+| Method | Description |
+|--------|-------------|
+| `requisitions_details(items)` | Stores a list of `(item name, cost)` pairs and returns the total |
+| `approve_requisition()` | Approves a requisition under $500 and gives it a reference number; otherwise leaves it pending |
+| `respond_to_requisition(manager_response)` | Applies a manager's `"Approved"` or `"Not approved"` response to a pending requisition |
+| `display_requisition()` | Prints one requisition's details |
+| `display_all_requisitions()` | Class method. Prints every requisition |
+| `requisition_statistics()` | Class method. Prints the number submitted, approved, pending and not approved |
+
+## Example usage
+
+```python
+from requisition import Requisition
+
+req = Requisition("03/04/2024", "FN19", "John Paul")
+req.requisitions_details([("Printer paper", 120), ("Toner cartridge", 180)])
+req.approve_requisition()          # total $300, so approved automatically
+req.display_requisition()
+
+big = Requisition("05/04/2024", "FN20", "Tracy Brown")
+big.requisitions_details([("Laptop", 850), ("Laptop bag", 150)])
+big.approve_requisition()          # total $1000, so pending
+big.respond_to_requisition("Approved")
+
+Requisition.requisition_statistics()
+```
+
+## Sample output
+
+```
+Date: 03/04/2024
+Requisition ID: 10001
+Staff ID: FN19
+Staff Name: John Paul
+Total: $450
+Status: Approved
+Approval Reference Number: FN19001
+```
+
+## Known limitations
+
+- Data is held in memory only and is lost when the program ends.
+- Costs and manager responses are not validated. Negative costs are accepted, and a misspelt response (e.g. `"approved"`) is ignored without a message.
+- Calling `approve_requisition()` again after a manager has responded can reset a pending status. Call it once, straight after `requisitions_details()`.
+- The statistics are printed rather than returned.
+
+## Development history
+
+The project was developed in three stages, each committed to Git:
+
+1. **Initial commit**: `Requisition` class, `__init__`, and `requisitions_details`.
+2. **Approval method**: `approve_requisition` with the $500 rule and reference numbers.
+3. **Final version**: manager response, display and statistics methods, and the full test program.
+
+
